@@ -21,6 +21,7 @@ from PyQt5 import QtWidgets
 from numpy import log10, argmax, zeros, arange, floor, float64
 from friture.audioproc import audioproc  # audio processing class
 from friture.spectrum_settings import (Spectrum_Settings_Dialog,  # settings dialog
+                                       DEFAULT_FADE_PEAKS,
                                        DEFAULT_FFT_SIZE,
                                        DEFAULT_FREQ_SCALE,
                                        DEFAULT_MAXFREQ,
@@ -82,6 +83,7 @@ class Spectrum_Widget(QtWidgets.QWidget):
         self.PlotZoneSpect.setspecrange(self.spec_min, self.spec_max)
         self.PlotZoneSpect.setweighting(self.weighting)
         self.PlotZoneSpect.set_peaks_enabled(True)
+        self.PlotZoneSpect.set_fade_peak_enabled(DEFAULT_FADE_PEAKS)
         self.PlotZoneSpect.set_baseline_displayUnits(0.)
         self.PlotZoneSpect.setShowFreqLabel(DEFAULT_SHOW_FREQ_LABELS)
 
@@ -261,6 +263,9 @@ class Spectrum_Widget(QtWidgets.QWidget):
 
     def setShowFreqLabel(self, showFreqLabel):
         self.PlotZoneSpect.setShowFreqLabel(showFreqLabel)
+    
+    def setFadePeaksEnabled(self, enabled):
+        self.PlotZoneSpect.set_fade_peak_enabled(enabled)
 
     def settings_called(self, checked):
         self.settings_dialog.show()

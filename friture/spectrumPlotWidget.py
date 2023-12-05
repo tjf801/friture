@@ -57,6 +57,7 @@ class SpectrumPlotWidget(QtWidgets.QWidget):
         self.paused = False
 
         self.peaks_enabled = True
+        self.peak_decay_enabled = True
         self.peak = zeros((3,))
         self.peak_int = zeros((3,))
         self.peak_decay = ones((3,)) * PEAK_DECAY_RATE
@@ -120,6 +121,9 @@ class SpectrumPlotWidget(QtWidgets.QWidget):
 
     def setShowFreqLabel(self, showFreqLabel):
         self._spectrum_data.showFrequencyTracker = showFreqLabel
+
+    def set_fade_peak_enabled(self, enabled):
+        self.peak_decay_enabled = enabled
 
     def set_peaks_enabled(self, enabled):
         self.peaks_enabled = enabled
@@ -193,10 +197,12 @@ class SpectrumPlotWidget(QtWidgets.QWidget):
         mask2_b = mask2 * (self.peak_int >= 0.2)
 
         self.peak[mask1] = y[mask1]
-        self.peak[mask2_a] = self.peak[mask2_a] + self.peak_decay[mask2_a]
 
-        self.peak_decay[mask1] = 20. * log10(PEAK_DECAY_RATE) * 5000
-        self.peak_decay[mask2_a] += 20. * log10(PEAK_DECAY_RATE) * 5000
+        if self.peak_decay_enabled:
+            self.peak[mask2_a] = self.peak[mask2_a] + self.peak_decay[mask2_a]
+            self.peak_decay[mask1] = 20. * log10(PEAK_DECAY_RATE) * 5000
+            self.peak_decay[mask2_a] += 20. * log10(PEAK_DECAY_RATE) * 5000
 
         self.peak_int[mask1] = 1.
-        self.peak_int[mask2_b] *= 0.975
+        if self.peak_decay_enabled:
+            self.peak_int[mask2_b] *= 0.975
